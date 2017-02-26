@@ -1,0 +1,18 @@
+#+TITLE:ivy-todo
+
+With =ivy-todo= you can add or modify items in your [[http://orgmode.org][org-mode]] TODO lists using [[https://github.com/abo-abo/swiper][ivy]]. The primary use case is to quickly edit TODO items in the project you're currently working on, =ivy-todo= tries to figure out your project's name using [[https://github.com/bbatsov/projectile][projectile]] or [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Version-Control.html][vc.el]].
+
+* Setup
+
+Add =ivy-todo.el= to your load-path and require it in your init file. You might want to change the variable =ivy-todo-file= (defaults to /ivy-todo.org/ in your =org-directory=). If you do not want =ivy-todo= to guess which TODO list to use, put =(setq ivy-todo-guess-list nil)= in your init file. Example setup using [[https://github.com/jwiegley/use-package][use-package]]:
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy-todo
+    :commands ivy-todo)
+#+END_SRC
+
+* Usage
+
+Each level 1 headline in your =ivy-todo-file= is considered a TODO list. Use =M-x ivy-todo= (or bind it to a key) to manipulate the items. To change TODO list, use the universal argument (=C-u M-x ivy-todo=). To change =ivy-todo-file= use double universal argument (=C-u C-u M-x ivy-todo=).
+
+The default ivy action is to modify the TODO state of the chosen item. You can choose different actions by using =M-o= (by default) in the ivy buffer.
