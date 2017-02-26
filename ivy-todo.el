@@ -130,8 +130,8 @@ With a `\\[universal-argument] \\[universal-argument]' ARG, change `ivy-todo-fil
   (when (> arg 1)
     (setq ivy-todo-headline
           (ivy-todo--get-headline (completing-read "TODO list: " (ivy-todo--headlines)))))
-  (let ((pos (cdr ivy-todo-headline))
-        (items (ivy-todo--list-items)))
+  (let ((items (ivy-todo--list-items))
+        (pos (cdr ivy-todo-headline)))
     (ivy-read
      (concat "\"" (car ivy-todo-headline) "\" items: ")
      items
