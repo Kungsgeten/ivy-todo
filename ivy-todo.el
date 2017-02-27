@@ -76,12 +76,14 @@ Return nil if no headline is found, else a string."
 (defun ivy-todo--buffer-headline-name ()
   "Get the name of the headline associated with the current buffer.
 Set `ivy-todo-headline` to the headline name."
-  (setq ivy-todo-headline
-        (let ((headlines (ivy-todo--headlines)))
-          (if ivy-todo-guess-list
-              (or (ivy-todo--guess-headline-name)
-                  (ivy-todo--get-headline (completing-read "TODO list: " headlines)))
-            (ivy-todo--get-headline (completing-read "TODO list: " headlines))))))
+  (if ivy-todo-headline
+      ivy-todo-headline
+    (setq ivy-todo-headline
+          (let ((headlines (ivy-todo--headlines)))
+            (if ivy-todo-guess-list
+                (or (ivy-todo--guess-headline-name)
+                    (ivy-todo--get-headline (completing-read "TODO list: " headlines)))
+              (ivy-todo--get-headline (completing-read "TODO list: " headlines)))))))
 
 (defun ivy-todo--list-items ()
   "Return alist of todo items of `ivy-todo-headline'.
