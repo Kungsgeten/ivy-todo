@@ -7,7 +7,7 @@
 ;; URL: http://github.com/Kungsgeten/ivy-todo
 ;; Version: 1.00
 ;; Keywords: convenience
-;; Package-Requires: ((ivy "0.8.0") (emacs "24"))
+;; Package-Requires: ((ivy "0.8.0") (emacs "24.3"))
 
 ;;; Commentary:
 
@@ -42,43 +42,46 @@ Normally use `ivy-todo--buffer-headline-name' instead of accessing this variable
 (defun ivy-todo--get-headline (headline)
   "Return HEADLINE if HEADLINE exists in `ivy-todo-file'.
 Ask if the user want to add it if it doesn't exist."
-  (or
-   (org-element-map (ivy-todo--ast) 'headline
-     (lambda (h1)
-       (when (and (= (org-element-property :level h1) 1)
-                  (equal (org-element-property :raw-value h1) headline))
-         (cons headline (org-element-property :begin h1))))
-     nil t)
-   (if (y-or-n-p (concat headline " doesn't exist. Would you like to created it?"))
-       (progn
-         (ivy-todo--replace-ast
-          (org-element-adopt-elements
-           (ivy-todo--ast)
-           (org-element-create 'headline `(:level 1 ,:title (,headline)))))
-         (ivy-todo--get-headline headline))
-     nil)))
+  (when headline
+    (or
+     (org-element-map (ivy-todo--ast) 'headline
+       (lambda (h1)
+         (when (and (= (org-element-property :level h1) 1)
+                    (equal (org-element-property :raw-value h1) headline))
+           (cons headline (org-element-property :begin h1))))
+       nil t)
+     (if (y-or-n-p (concat headline " doesn't exist. Would you like to created it?"))
+         (progn
+           (ivy-todo--replace-ast
+            (org-element-adopt-elements
+             (ivy-todo--ast)
+             (org-element-create 'headline `(:level 1 ,:title (,headline)))))
+           (ivy-todo--get-headline headline))
+       nil))))
+
+(defun ivy-todo--guess-headline-name ()
+  "Guess the headline name associated with the current buffer.
+Return nil if no headline is found, else a string."
+  (cond ((and (require 'projectile nil t)
+              (projectile-project-name)
+              (not (equal (projectile-project-name) "-")))
+         (ivy-todo--get-headline (projectile-project-name)))
+        ((require 'find-file-in-project nil t)
+         (ivy-todo--get-headline (file-name-base (directory-file-name (ffip-get-project-root-directory)))))
+        ((and (require 'vc nil t)
+              (vc-root-dir))
+         (ivy-todo--get-headline (file-name-base (directory-file-name (vc-root-dir)))))
+        (t nil)))
 
 (defun ivy-todo--buffer-headline-name ()
   "Get the name of the headline associated with the current buffer.
 Set `ivy-todo-headline` to the headline name."
   (setq ivy-todo-headline
         (let ((headlines (ivy-todo--headlines)))
-          (cond (ivy-todo-headline ivy-todo-headline)
-                ;; Projectile
-                ((and ivy-todo-guess-list
-                      (require 'projectile nil t)
-                      (projectile-project-name)
-                      (not (equal (projectile-project-name) "-")))
-                 (or (ivy-todo--get-headline (projectile-project-name))
-                     (ivy-todo--get-headline (completing-read "TODO list: " headlines))))
-                ;; vc.el
-                ((and ivy-todo-guess-list
-                      (require 'vc nil t)
-                      (vc-root-dir))
-                 (or (ivy-todo--get-headline (file-name-base (directory-file-name (vc-root-dir))))
-                     (ivy-todo--get-headline (completing-read "TODO list: " headlines))))
-                (t
-                 (ivy-todo--get-headline (completing-read "TODO list: " headlines)))))))
+          (if ivy-todo-guess-list
+              (or (ivy-todo--guess-headline-name)
+                  (ivy-todo--get-headline (completing-read "TODO list: " headlines)))
+            (ivy-todo--get-headline (completing-read "TODO list: " headlines))))))
 
 (defun ivy-todo--list-items ()
   "Return alist of todo items of `ivy-todo-headline'.
