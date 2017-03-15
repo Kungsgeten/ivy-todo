@@ -1,6 +1,6 @@
 #+TITLE:ivy-todo
 
-With =ivy-todo= you can add or modify items in your [[http://orgmode.org][org-mode]] TODO lists using [[https://github.com/abo-abo/swiper][ivy]]. The primary use case is to quickly edit TODO items in the project you're currently working on, =ivy-todo= tries to figure out your project's name using [[https://github.com/bbatsov/projectile][projectile]] or [[https://github.com/technomancy/find-file-in-project][find-file-in-project]] or [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Version-Control.html][vc.el]].
+With =ivy-todo= you can add or modify items in your [[http://orgmode.org][org-mode]] TODO lists using [[https://github.com/abo-abo/swiper][ivy]]. The primary use case is to quickly edit TODO items in the project you're currently working on, =ivy-todo= tries to figure out your project's name using [[https://github.com/bbatsov/projectile][projectile]] or [[https://github.com/technomancy/find-file-in-project][find-file-in-project]] or [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Version-Control.html][vc.el]] (requires Emacs 25 or greater).
 
 * Setup
 
