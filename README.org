@@ -1,13 +1,14 @@
-#+TITLE:ivy-todo
+#+TITLE:ivy-todo [[http://melpa.org/#/ivy-todo][file:http://melpa.org/packages/ivy-todo-badge.svg]]
 
 With =ivy-todo= you can add or modify items in your [[http://orgmode.org][org-mode]] TODO lists using [[https://github.com/abo-abo/swiper][ivy]]. The primary use case is to quickly edit TODO items in the project you're currently working on, =ivy-todo= tries to figure out your project's name using [[https://github.com/bbatsov/projectile][projectile]] or [[https://github.com/technomancy/find-file-in-project][find-file-in-project]] or [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Version-Control.html][vc.el]] (requires Emacs 25 or greater).
 
 * Setup
 
-Add =ivy-todo.el= to your load-path and require it in your init file. You might want to change the variable =ivy-todo-file= (defaults to /ivy-todo.org/ in your =org-directory=). If you do not want =ivy-todo= to guess which TODO list to use, put =(setq ivy-todo-guess-list nil)= in your init file. Example setup using [[https://github.com/jwiegley/use-package][use-package]]:
+You could download =ivy-todo= from Melpa, or add =ivy-todo.el= to your load-path and require it in your init file. You might want to change the variable =ivy-todo-file= (defaults to /ivy-todo.org/ in your =org-directory=). If you do not want =ivy-todo= to guess which TODO list to use, put =(setq ivy-todo-guess-list nil)= in your init file. Example setup using [[https://github.com/jwiegley/use-package][use-package]]:
 
 #+BEGIN_SRC emacs-lisp
-  (use-package ivy-todo
+  (use-package ivy-todo :ensure t
+    :bind ("C-c t" . ivy-todo)
     :commands ivy-todo)
 #+END_SRC
 
