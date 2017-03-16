@@ -8,7 +8,7 @@ You could download =ivy-todo= from Melpa, or add =ivy-todo.el= to your load-path
 
 #+BEGIN_SRC emacs-lisp
   (use-package ivy-todo :ensure t
-    :bind ("C-c t" . ivy-todo)
+    :bind (:map org-mode-map ("C-c t" . ivy-todo))
     :commands ivy-todo)
 #+END_SRC
 
