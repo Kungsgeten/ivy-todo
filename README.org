@@ -9,8 +9,12 @@ You could download =ivy-todo= from Melpa, or add =ivy-todo.el= to your load-path
 #+BEGIN_SRC emacs-lisp
   (use-package ivy-todo :ensure t
     :bind ("C-c t" . ivy-todo)
-    :commands ivy-todo)
+    :commands ivy-todo
+    :config
+    (setq ivy-todo-default-tags '("PROJECT")))
 #+END_SRC
+
+The variable =ivy-todo-default-tags= can be used to set a list of tags which will be applied to new project lists (it is =nil= by default).
 
 * Usage
 
