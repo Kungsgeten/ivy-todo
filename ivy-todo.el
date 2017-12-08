@@ -220,6 +220,14 @@ HEADLINE is a string or a cons (\"headline\" . buffer-pos)."
         (org-refile)
         (save-buffer)))))
 
+(defun ivy-todo-visit (headline)
+  "Visit HEADLINE in `ivy-todo-file'.
+HEADLINE is a string or a cons (\"headline\" . buffer-pos)."
+  (let ((headline-pos (cdr ivy-todo-headline)))
+    (with-current-buffer (find-file ivy-todo-file)
+      (ivy-todo--old-or-new-item headline headline-pos)
+      (save-buffer))))
+
 (ivy-set-actions
  'ivy-todo
  '(("," ivy-todo-set-priority "priority")
@@ -227,7 +235,8 @@ HEADLINE is a string or a cons (\"headline\" . buffer-pos)."
    ("e" ivy-todo-set-effort "effort")
    ("p" ivy-todo-set-property "property")
    ("r" ivy-todo-refile "refile")
-   ("t" ivy-todo-set-tags "tags")))
+   ("t" ivy-todo-set-tags "tags")
+   ("v" ivy-todo-visit "visit")))
 
 (provide 'ivy-todo)
 ;;; ivy-todo.el ends here
