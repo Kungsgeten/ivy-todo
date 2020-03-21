@@ -1,18 +1,18 @@
 ;;; ivy-todo.el --- Manage org-mode TODOs with ivy   -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2017  Erik Sjöstrand
+;; Copyright (C) 2017--2020  Erik Sjöstrand
 ;; MIT License
 
 ;; Author: Erik Sjöstrand <sjostrand.erik@gmail.com>
 ;; URL: http://github.com/Kungsgeten/ivy-todo
 ;; Version: 1.00
 ;; Keywords: convenience
-;; Package-Requires: ((ivy "0.8.0") (emacs "24.3"))
+;; Package-Requires: ((ivy "0.8.0") (emacs "25"))
 
 ;;; Commentary:
 
 ;; The file `ivy-todo-file' should be an `org-mode' file containing TODO lists.
-;; These lists can be modified using `ivy-todo'. The last used TODO list while
+;; These lists can be modified using `ivy-todo'. The last used TODO list will
 ;; be buffer-locally saved. ivy-todo will try to guess the TODO list (based on
 ;; the project you're working on) if `ivy-todo-guess-list' is t.
 
@@ -54,13 +54,13 @@ Ask if the user want to add it if it doesn't exist."
                     (equal (org-element-property :raw-value h1) headline))
            (cons headline (org-element-property :begin h1))))
        nil t)
-     (if (y-or-n-p (concat headline " doesn't exist. Would you like to created it?"))
+     (if (y-or-n-p (concat headline " doesn't exist. Would you like to create it?"))
          (progn
            (ivy-todo--replace-ast
             (org-element-adopt-elements
-             (ivy-todo--ast)
-             (org-element-create 'headline `(:level 1 ,:title (,headline)
-                                                    :tags ,ivy-todo-default-tags))))
+                (ivy-todo--ast)
+              (org-element-create 'headline `(:level 1 ,:title (,headline)
+                                              :tags ,ivy-todo-default-tags))))
            (ivy-todo--get-headline headline))
        nil))))
 
@@ -94,17 +94,19 @@ Set `ivy-todo-headline` to the headline name."
 (defun ivy-todo--list-items ()
   "Return alist of todo items of `ivy-todo-headline'.
 The car is the name and the cdr is the position in `ivy-todo-file'."
-  (org-element-map (ivy-todo--ast) 'headline
-    (lambda (h1)
-      (when (and (= (org-element-property :level h1) 1)
-                 (string-equal (car (ivy-todo--buffer-headline-name))
-                               (org-element-property :raw-value h1)))
-        (org-element-map (org-element-contents h1) 'headline
-          (lambda (todo-item)
-            (when (org-element-property :todo-type todo-item)
-              (cons (car (split-string (org-element-interpret-data todo-item) "\n"))
-                    (org-element-property :begin todo-item)))))))
-    nil t))
+  (or
+   (org-element-map (ivy-todo--ast) 'headline
+     (lambda (h1)
+       (when (and (= (org-element-property :level h1) 1)
+                  (string-equal (car (ivy-todo--buffer-headline-name))
+                                (org-element-property :raw-value h1)))
+         (org-element-map (org-element-contents h1) 'headline
+           (lambda (todo-item)
+             (when (org-element-property :todo-type todo-item)
+               (cons (car (split-string (org-element-interpret-data todo-item) "\n"))
+                     (org-element-property :begin todo-item)))))))
+     nil t)
+   (and (ivy-todo--buffer-headline-name) nil)))
 
 (defun ivy-todo--ast ()
   "Get the AST for the TODO file."
@@ -147,18 +149,18 @@ With a `\\[universal-argument] \\[universal-argument]' ARG, change `ivy-todo-fil
      (concat "\"" (car ivy-todo-headline) "\" items: ")
      items
      :action
-      (lambda (x)
-        (delay-mode-hooks
-          (with-current-buffer (find-file-noselect ivy-todo-file)
-            (if (stringp x)
-                (progn
-                  (goto-char pos)
-                  (goto-char (line-end-position))
-                  (org-insert-todo-subheading 1)
-                  (insert x))
-              (goto-char (cdr x))
-              (org-todo))
-            (save-buffer)))))))
+     (lambda (x)
+       (delay-mode-hooks
+         (with-current-buffer (find-file-noselect ivy-todo-file)
+           (if (stringp x)
+               (progn
+                 (goto-char pos)
+                 (goto-char (line-end-position))
+                 (org-insert-todo-subheading 1)
+                 (insert x))
+             (goto-char (cdr x))
+             (org-todo))
+           (save-buffer)))))))
 
 (defun ivy-todo-archive (headline)
   "Goto HEADLINE in `ivy-todo-file' and archive it.
