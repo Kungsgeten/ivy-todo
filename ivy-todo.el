@@ -199,9 +199,8 @@ HEADLINE is a string or a cons (\"headline\" . buffer-pos)."
     (delay-mode-hooks
       (with-current-buffer (find-file-noselect ivy-todo-file)
         (ivy-todo--old-or-new-item headline headline-pos)
-        (org-set-tags)
+        (org-set-tags-command)
         (save-buffer)))))
-
 (defun ivy-todo-set-effort (headline)
   "Goto HEADLINE in `ivy-todo-file' and call `org-set-effort'.
 HEADLINE is a string or a cons (\"headline\" . buffer-pos)."
