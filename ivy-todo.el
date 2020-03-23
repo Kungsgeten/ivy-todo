@@ -106,7 +106,9 @@ The car is the name and the cdr is the position in `ivy-todo-file'."
 (defun ivy-todo--ast ()
   "Get the AST for the TODO file."
   (delay-mode-hooks
-    (with-current-buffer (find-file-noselect ivy-todo-file)
+    (with-temp-buffer
+      (insert-file-contents ivy-todo-file)
+      (org-mode)
       (org-element-parse-buffer))))
 
 (defun ivy-todo--replace-ast (ast)
